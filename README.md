@@ -21,7 +21,7 @@ A private journal for thesis ideas and projects. Next.js 15 (App Router, server 
 ## 2. Run locally
 
 ```bash
-cp .env.example .env.local   # fill in URL + anon/publishable key + your email
+cp .env.example .env.local 
 npm install
 npm run dev
 ```
