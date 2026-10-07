@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import EntryForm from "@/components/EntryForm";
 import { deleteEntry, updateEntry } from "@/app/actions";
 import { formatDate, type Entry } from "@/lib/types";
+import { signImages } from "@/lib/images";
 
 export default async function EntryPage({
   params,
@@ -19,6 +20,7 @@ export default async function EntryPage({
   const { data } = await supabase.from("entries").select("*, projects(id, title)").eq("id", id).single();
   if (!data) notFound();
   const entry = data as Entry;
+  const urls = await signImages(supabase, entry.images ?? []);
 
   if (edit) {
     const { data: projects } = await supabase.from("projects").select("id, title").order("title");
@@ -28,6 +30,7 @@ export default async function EntryPage({
           action={updateEntry.bind(null, id)}
           projects={projects ?? []}
           entry={entry}
+          imageUrls={Object.fromEntries(urls)}
           cancelHref={`/entries/${id}`}
         />
       </main>
@@ -55,6 +58,19 @@ export default async function EntryPage({
               {entry.projects.title}
             </Link>
           </p>
+        )}
+
+        {entry.images?.length > 0 && (
+          <div className={`gallery ${entry.images.length === 1 ? "single" : ""}`}>
+            {entry.images.map(
+              (path) =>
+                urls.get(path) && (
+                  <a key={path} href={urls.get(path)} target="_blank" rel="noreferrer">
+                    <img src={urls.get(path)} alt="" />
+                  </a>
+                )
+            )}
+          </div>
         )}
 
         <div className="prose">

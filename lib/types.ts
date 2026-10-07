@@ -1,4 +1,4 @@
-export const ENTRY_KINDS = ["idea", "note", "reference", "reflection", "todo"] as const;
+export const ENTRY_KINDS = ["idea", "note", "reference", "reflection", "todo", "image"] as const;
 export type EntryKind = (typeof ENTRY_KINDS)[number];
 
 export const PROJECT_STATUSES = ["idea", "exploring", "prototyping", "done", "parked"] as const;
@@ -20,6 +20,7 @@ export type Entry = {
   body: string | null;
   kind: EntryKind;
   tags: string[];
+  images: string[];
   link: string | null;
   pinned: boolean;
   created_at: string;

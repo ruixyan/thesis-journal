@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import EntryCard from "@/components/EntryCard";
+import { signImages } from "@/lib/images";
 import { deleteProject, updateProject } from "@/app/actions";
 import { PROJECT_STATUSES, type Entry, type Project } from "@/lib/types";
 
@@ -26,6 +27,7 @@ export default async function ProjectPage({
       .order("created_at", { ascending: false }),
   ]);
   if (!project) notFound();
+  const covers = await signImages(supabase, (entries ?? []).map((e) => e.images?.[0]));
 
   return (
     <main>
@@ -71,7 +73,7 @@ export default async function ProjectPage({
       ) : (
         <div className="grid">
           {(entries as Entry[]).map((e) => (
-            <EntryCard key={e.id} entry={e} />
+            <EntryCard key={e.id} entry={e} cover={covers.get(e.images?.[0])} />
           ))}
         </div>
       )}

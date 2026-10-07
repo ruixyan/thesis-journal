@@ -6,10 +6,11 @@ type Props = {
   projects: Pick<Project, "id" | "title">[];
   entry?: Entry;
   defaultProjectId?: string;
+  imageUrls?: Record<string, string>;
   cancelHref: string;
 };
 
-export default function EntryForm({ action, projects, entry, defaultProjectId, cancelHref }: Props) {
+export default function EntryForm({ action, projects, entry, defaultProjectId, imageUrls = {}, cancelHref }: Props) {
   return (
     <form action={action} className="stack editor">
       <input
@@ -17,7 +18,6 @@ export default function EntryForm({ action, projects, entry, defaultProjectId, c
         className="title-input"
         placeholder="Title"
         defaultValue={entry?.title}
-        required
         autoFocus={!entry}
       />
 
@@ -55,6 +55,23 @@ export default function EntryForm({ action, projects, entry, defaultProjectId, c
           placeholder="Write freely. Blank lines become paragraphs."
         />
       </label>
+
+      <div className="field">
+        <span>Images</span>
+        {!!entry?.images.length && (
+          <div className="thumb-grid">
+            {entry.images.map((path) => (
+              <label key={path} className="thumb">
+                {imageUrls[path] && <img src={imageUrls[path]} alt="" />}
+                <span className="check">
+                  <input type="checkbox" name="remove_image" value={path} /> Remove
+                </span>
+              </label>
+            ))}
+          </div>
+        )}
+        <input type="file" name="images" accept="image/*" multiple className="file-input" />
+      </div>
 
       <div className="row">
         <label className="field grow">

@@ -21,8 +21,9 @@ create table if not exists public.entries (
   title       text not null,
   body        text default '',
   kind        text not null default 'note'
-              check (kind in ('idea', 'note', 'reference', 'reflection', 'todo')),
+              check (kind in ('idea', 'note', 'reference', 'reflection', 'todo', 'image')),
   tags        text[] not null default '{}',
+  images      text[] not null default '{}',
   link        text,
   pinned      boolean not null default false,
   created_at  timestamptz not null default now(),
@@ -60,3 +61,5 @@ create policy "own projects" on public.projects
 drop policy if exists "own entries" on public.entries;
 create policy "own entries" on public.entries
   for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+-- Image storage: see add-images.sql (run it too)

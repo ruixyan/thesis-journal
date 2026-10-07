@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import EntryCard from "@/components/EntryCard";
+import { signImages } from "@/lib/images";
 import { ENTRY_KINDS, type Entry } from "@/lib/types";
 
 type Search = { q?: string; kind?: string; tag?: string; project?: string };
@@ -34,6 +35,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
   allTags?.forEach((r) => r.tags.forEach((t: string) => tagCounts.set(t, (tagCounts.get(t) ?? 0) + 1)));
   const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1]).slice(0, 24);
 
+  const covers = await signImages(supabase, (entries ?? []).map((e) => e.images?.[0]));
   const filtered = Boolean(q || kind || tag || project);
 
   return (
@@ -92,7 +94,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<Sea
         ) : (
           <div className="grid">
             {(entries as Entry[]).map((e) => (
-              <EntryCard key={e.id} entry={e} />
+              <EntryCard key={e.id} entry={e} cover={covers.get(e.images?.[0])} />
             ))}
           </div>
         )}
